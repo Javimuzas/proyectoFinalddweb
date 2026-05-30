@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %> · Top3
+  </title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Navegación principal">
+      <a href="/" class="brand">Top3</a>
+
+      <div class="nav-links">
+        <a href="/">Inicio</a>
+        <a href="/privacy">Privacidad</a>
+
+        <% if (currentUser) { %>
+          <a href="/topics/new">Nuevo tema</a>
+
+          <% if (currentUser.role==='admin' ) { %>
+            <a href="/admin">Admin</a>
+            <% } %>
+
+              <span class="welcome">@<%= currentUser.username %></span>
+
+              <form action="/logout" method="POST" class="inline-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Salir</button>
+              </form>
+
+              <form action="/account/delete" method="POST" class="inline-form"
+                onsubmit="return confirm('¿Seguro que quieres eliminar tu cuenta y tus datos? Esta acción no se puede deshacer.');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="danger-button">Eliminar cuenta</button>
+              </form>
+              <% } else { %>
+                <a href="/login">Entrar</a>
+                <a href="/register">Registro</a>
+                <% } %>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenido-principal" class="container main-content" tabindex="-1">
+    <% if (flash) { %>
+      <div class="flash flash-<%= flash.type %>" role="status" aria-live="polite">
+        <%= flash.message %>
+      </div>
+      <% } %>
+
+        <%- body %>
+  </main>
+
+  <footer class="site-footer container">
+    <p>
+      <a href="/privacy">Política de privacidad</a>
+    </p>
+  </footer>
+</body>
+
+</html>

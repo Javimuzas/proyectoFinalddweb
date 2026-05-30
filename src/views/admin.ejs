@@ -1,0 +1,19 @@
+<section>
+  <h1>Administración</h1>
+  <div class="cards stats-grid">
+    <article class="card"><h2>Usuarios</h2><p><%= stats.users %></p></article>
+    <article class="card"><h2>Temas</h2><p><%= stats.topics %></p></article>
+    <article class="card"><h2>Respuestas</h2><p><%= stats.replies %></p></article>
+  </div>
+</section>
+
+<section>
+  <h2>Últimos usuarios</h2>
+  <div class="card">
+    <ul>
+      <% latestUsers.forEach(user => { %>
+        <li><strong><%= user.username %></strong> · <%= user.email %> · <%= user.role %></li>
+      <% }) %>
+    </ul>
+  </div>
+</section>

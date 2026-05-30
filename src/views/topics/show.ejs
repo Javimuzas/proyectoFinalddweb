@@ -1,0 +1,65 @@
+<article class="card detail-card">
+  <div class="detail-head">
+    <div>
+      <h1><%= topic.title %></h1>
+      <p class="meta">Publicado por <strong><%= topic.username %></strong></p>
+    </div>
+    <% if (currentUser && (currentUser.id === topic.user_id || currentUser.role === 'admin')) { %>
+      <div class="actions">
+        <a class="button secondary" href="/topics/<%= topic.id %>/edit">Editar</a>
+        <form action="/topics/<%= topic.id %>/delete" method="POST" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="danger">Borrar</button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+  <ol>
+    <li><%= topic.item_one %></li>
+    <li><%= topic.item_two %></li>
+    <li><%= topic.item_three %></li>
+  </ol>
+</article>
+
+<section class="form-card">
+  <h2>Responder con tu top 3</h2>
+  <% if (currentUser) { %>
+    <form action="/topics/<%= topic.id %>/replies" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label>Puesto 1
+        <input type="text" name="item_one" maxlength="120" required>
+      </label>
+      <label>Puesto 2
+        <input type="text" name="item_two" maxlength="120" required>
+      </label>
+      <label>Puesto 3
+        <input type="text" name="item_three" maxlength="120" required>
+      </label>
+      <button class="button" type="submit">Publicar respuesta</button>
+    </form>
+  <% } else { %>
+    <p>Necesitas iniciar sesión para publicar tu top 3.</p>
+  <% } %>
+</section>
+
+<section>
+  <h2>Respuestas</h2>
+  <div class="cards">
+    <% replies.forEach(reply => { %>
+      <article class="card">
+        <p class="meta">@<strong><%= reply.username %></strong></p>
+        <ol>
+          <li><%= reply.item_one %></li>
+          <li><%= reply.item_two %></li>
+          <li><%= reply.item_three %></li>
+        </ol>
+        <% if (currentUser && (currentUser.id === reply.user_id || currentUser.role === 'admin')) { %>
+          <form action="/replies/<%= reply.id %>/delete" method="POST" class="inline-form mt-16">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="danger">Eliminar respuesta</button>
+          </form>
+        <% } %>
+      </article>
+    <% }) %>
+  </div>
+</section>

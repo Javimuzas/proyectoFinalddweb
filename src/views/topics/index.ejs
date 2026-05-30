@@ -1,0 +1,27 @@
+<section class="hero">
+  <h1>Tu tema, tu top 3, y el top 3 de los demás.</h1>
+  <p>Top3 es un foro sencillo donde cada publicación es un tema con ranking y cada respuesta es otro ranking.</p>
+  <% if (currentUser) { %>
+    <a class="button" href="/topics/new">Crear tema</a>
+  <% } %>
+</section>
+
+<section>
+  <h2>Últimos temas</h2>
+  <% if (!topics.length) { %>
+    <p>Todavía no hay temas publicados.</p>
+  <% } %>
+  <div class="cards">
+    <% topics.forEach(topic => { %>
+      <article class="card">
+        <h3><a href="/topics/<%= topic.id %>"><%= topic.title %></a></h3>
+        <ol>
+          <li><%= topic.item_one %></li>
+          <li><%= topic.item_two %></li>
+          <li><%= topic.item_three %></li>
+        </ol>
+        <p class="meta">Por <strong><%= topic.username %></strong> · <%= topic.reply_count %> respuestas</p>
+      </article>
+    <% }) %>
+  </div>
+</section>

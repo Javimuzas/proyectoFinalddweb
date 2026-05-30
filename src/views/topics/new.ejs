@@ -1,0 +1,19 @@
+<section class="form-card">
+  <h1>Nuevo tema</h1>
+  <form action="/topics" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>Tema
+      <input type="text" name="title" maxlength="120" required>
+    </label>
+    <label>Puesto 1
+      <input type="text" name="item_one" maxlength="120" required>
+    </label>
+    <label>Puesto 2
+      <input type="text" name="item_two" maxlength="120" required>
+    </label>
+    <label>Puesto 3
+      <input type="text" name="item_three" maxlength="120" required>
+    </label>
+    <button class="button" type="submit">Publicar</button>
+  </form>
+</section>
