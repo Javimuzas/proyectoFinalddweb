@@ -1,7 +1,6 @@
 <section class="form-card">
   <h1>Editar tema</h1>
   <form action="/topics/<%= topic.id %>/edit" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <label>Tema
       <input type="text" name="title" maxlength="120" required value="<%= topic.title %>">
     </label>

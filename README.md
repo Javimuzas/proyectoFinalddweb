@@ -17,7 +17,6 @@ El objetivo de Top3 es ofrecer un foro temático sencillo en el que cada publica
 - Helmet
 - bcrypt
 - express-session
-- csurf
 - Zod
 
 ## Requisitos previos
@@ -123,6 +122,7 @@ ADMIN_PASSWORD=AdminTop3!2026
 - `PORT`: puerto en el que se ejecuta la aplicación.
 - `SESSION_SECRET`: clave secreta usada para firmar las sesiones.
 - `NODE_ENV`: entorno de ejecución (`development` o `production`).
+- `APP_ORIGIN`: origen/URL permitido para la validación de procedencia CSRF (ej. `http://localhost:3000`).
 - `ADMIN_USERNAME`: nombre de usuario de la cuenta administradora inicial.
 - `ADMIN_EMAIL`: correo de la cuenta administradora inicial.
 - `ADMIN_PASSWORD`: contraseña de la cuenta administradora inicial.

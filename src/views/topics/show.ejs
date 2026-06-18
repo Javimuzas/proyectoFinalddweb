@@ -8,7 +8,6 @@
       <div class="actions">
         <a class="button secondary" href="/topics/<%= topic.id %>/edit">Editar</a>
         <form action="/topics/<%= topic.id %>/delete" method="POST" class="inline-form">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit" class="danger">Borrar</button>
         </form>
       </div>
@@ -25,7 +24,6 @@
   <h2>Responder con tu top 3</h2>
   <% if (currentUser) { %>
     <form action="/topics/<%= topic.id %>/replies" method="POST">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <label>Puesto 1
         <input type="text" name="item_one" maxlength="120" required>
       </label>
@@ -55,7 +53,6 @@
         </ol>
         <% if (currentUser && (currentUser.id === reply.user_id || currentUser.role === 'admin')) { %>
           <form action="/replies/<%= reply.id %>/delete" method="POST" class="inline-form mt-16">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit" class="danger">Eliminar respuesta</button>
           </form>
         <% } %>

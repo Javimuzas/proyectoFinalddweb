@@ -1,7 +1,6 @@
 <section class="form-card">
   <h1>Nuevo tema</h1>
   <form action="/topics" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <label>Tema
       <input type="text" name="title" maxlength="120" required>
     </label>

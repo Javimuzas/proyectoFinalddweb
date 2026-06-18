@@ -6,7 +6,7 @@ const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
-const csrf = require('csurf');
+
 
 const authRoutes = require('./routes/auth');
 const topicRoutes = require('./routes/topics');
@@ -15,6 +15,7 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const isProd = process.env.NODE_ENV === 'production';
+const allowedOrigin = process.env.APP_ORIGIN || `http://localhost:${PORT}`;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -47,16 +48,42 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: isProd,
-    sameSite: 'lax',
+    sameSite: 'strict',
     maxAge: 1000 * 60 * 60 * 4
   }
 }));
 
-app.use(csrf());
+
+app.use((req, res, next) => {
+  if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    return next();
+  }
+
+  const origin = req.get('origin');
+  const referer = req.get('referer');
+
+  let source = origin;
+
+  if (!source && referer) {
+    try {
+      source = new URL(referer).origin;
+    } catch {
+      source = null;
+    }
+  }
+
+  if (source !== allowedOrigin) {
+    return res.status(403).render('error', {
+      title: 'Error de Seguridad (CSRF)',
+      message: 'La solicitud no proviene de un origen permitido.'
+    });
+  }
+
+  next();
+});
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
-  res.locals.csrfToken = req.csrfToken();
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
   next();
@@ -67,10 +94,6 @@ app.use(topicRoutes);
 app.use(adminRoutes);
 
 app.use((err, req, res, next) => {
-  if (err.code === 'EBADCSRFTOKEN') {
-    req.session.flash = { type: 'error', message: 'Token CSRF inválido o caducado.' };
-    return res.redirect('back');
-  }
   console.error(err);
   res.status(500).render('error', { title: 'Error interno', message: 'Ha ocurrido un error inesperado.' });
 });

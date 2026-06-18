@@ -31,13 +31,11 @@
               <span class="welcome">@<%= currentUser.username %></span>
 
               <form action="/logout" method="POST" class="inline-form">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit">Salir</button>
               </form>
 
               <form action="/account/delete" method="POST" class="inline-form"
                 onsubmit="return confirm('¿Seguro que quieres eliminar tu cuenta y tus datos? Esta acción no se puede deshacer.');">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit" class="danger-button">Eliminar cuenta</button>
               </form>
               <% } else { %>
