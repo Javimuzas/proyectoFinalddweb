@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
+const { requireTopicOwnerOrAdmin, requireReplyOwnerOrAdmin } = require('../middleware/ownership');
 const { topicSchema, replySchema, getFirstError } = require('../validators');
 
 const router = express.Router();
@@ -64,43 +65,11 @@ router.get('/topics/:id', (req, res) => {
   res.render('topics/show', { title: topic.title, topic, replies });
 });
 
-router.get('/topics/:id/edit', requireAuth, (req, res) => {
-  const topic = db.prepare('SELECT * FROM topics WHERE id = ?').get(req.params.id);
-
-  if (!topic) {
-    return res.status(404).render('error', {
-      title: 'No encontrado',
-      message: 'El tema no existe.'
-    });
-  }
-
-  if (topic.user_id !== req.session.user.id && req.session.user.role !== 'admin') {
-    return res.status(403).render('error', {
-      title: 'Acceso denegado',
-      message: 'No puedes editar este tema.'
-    });
-  }
-
-  res.render('topics/edit', { title: 'Editar tema', topic });
+router.get('/topics/:id/edit', requireAuth, requireTopicOwnerOrAdmin, (req, res) => {
+  res.render('topics/edit', { title: 'Editar tema', topic: req.topic });
 });
 
-router.post('/topics/:id/edit', requireAuth, (req, res) => {
-  const topic = db.prepare('SELECT * FROM topics WHERE id = ?').get(req.params.id);
-
-  if (!topic) {
-    return res.status(404).render('error', {
-      title: 'No encontrado',
-      message: 'El tema no existe.'
-    });
-  }
-
-  if (topic.user_id !== req.session.user.id && req.session.user.role !== 'admin') {
-    return res.status(403).render('error', {
-      title: 'Acceso denegado',
-      message: 'No puedes editar este tema.'
-    });
-  }
-
+router.post('/topics/:id/edit', requireAuth, requireTopicOwnerOrAdmin, (req, res) => {
   const parsed = topicSchema.safeParse(req.body);
 
   if (!parsed.success) {
@@ -117,24 +86,9 @@ router.post('/topics/:id/edit', requireAuth, (req, res) => {
   res.redirect(`/topics/${req.params.id}`);
 });
 
-router.post('/topics/:id/delete', requireAuth, (req, res) => {
-  const topic = db.prepare('SELECT * FROM topics WHERE id = ?').get(req.params.id);
-
-  if (!topic) {
-    return res.status(404).render('error', {
-      title: 'No encontrado',
-      message: 'El tema no existe.'
-    });
-  }
-
-  if (topic.user_id !== req.session.user.id && req.session.user.role !== 'admin') {
-    return res.status(403).render('error', {
-      title: 'Acceso denegado',
-      message: 'No puedes borrar este tema.'
-    });
-  }
-
+router.post('/topics/:id/delete', requireAuth, requireTopicOwnerOrAdmin, (req, res) => {
   db.prepare('DELETE FROM topics WHERE id = ?').run(req.params.id);
+
   req.session.flash = { type: 'success', message: 'Tema eliminado.' };
   res.redirect('/');
 });
@@ -165,24 +119,9 @@ router.post('/topics/:id/replies', requireAuth, (req, res) => {
   res.redirect(`/topics/${req.params.id}`);
 });
 
-router.post('/replies/:id/delete', requireAuth, (req, res) => {
-  const reply = db.prepare('SELECT * FROM replies WHERE id = ?').get(req.params.id);
+router.post('/replies/:id/delete', requireAuth, requireReplyOwnerOrAdmin, (req, res) => {
+  const topicId = req.reply.topic_id;
 
-  if (!reply) {
-    return res.status(404).render('error', {
-      title: 'No encontrado',
-      message: 'La respuesta no existe.'
-    });
-  }
-
-  if (reply.user_id !== req.session.user.id && req.session.user.role !== 'admin') {
-    return res.status(403).render('error', {
-      title: 'Acceso denegado',
-      message: 'No puedes borrar esta respuesta.'
-    });
-  }
-
-  const topicId = reply.topic_id;
   db.prepare('DELETE FROM replies WHERE id = ?').run(req.params.id);
 
   req.session.flash = { type: 'success', message: 'Respuesta eliminada.' };
