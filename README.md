@@ -109,12 +109,12 @@ Ejemplo:
 
 ```env
 PORT=3000
-SESSION_SECRET=change-this-in-production
+SESSION_SECRET=your-session-secret-here
 NODE_ENV=development
 
 ADMIN_USERNAME=admin
-ADMIN_EMAIL=admin@top3.local
-ADMIN_PASSWORD=AdminTop3!2026
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=change-this-admin-password
 ```
 
 ### Explicación de variables
@@ -122,7 +122,6 @@ ADMIN_PASSWORD=AdminTop3!2026
 - `PORT`: puerto en el que se ejecuta la aplicación.
 - `SESSION_SECRET`: clave secreta usada para firmar las sesiones.
 - `NODE_ENV`: entorno de ejecución (`development` o `production`).
-- `APP_ORIGIN`: origen/URL permitido para la validación de procedencia CSRF (ej. `http://localhost:3000`).
 - `ADMIN_USERNAME`: nombre de usuario de la cuenta administradora inicial.
 - `ADMIN_EMAIL`: correo de la cuenta administradora inicial.
 - `ADMIN_PASSWORD`: contraseña de la cuenta administradora inicial.
